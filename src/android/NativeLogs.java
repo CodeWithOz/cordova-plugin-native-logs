@@ -69,6 +69,36 @@ public class NativeLogs extends CordovaPlugin {
         return log;
     }
 
+    private  String getPushwooshLogsFromLogCat(int _nbLines) {
+
+        LinkedList<String> logs = new LinkedList<String>();
+
+        try {
+            Process process = Runtime.getRuntime().exec("logcat -s Pushwoosh:V");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String line ;
+            while (( line = bufferedReader.readLine()) != null) {
+                logs.add(line);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String log = "";
+
+        int nb = 0;
+        while( (nb < _nbLines) && (logs.size() > 0) ) {
+            log += logs.getLast();
+            log += "\n";
+            logs.removeLast();
+            nb++;
+        }
+        return log;
+    }
+
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext)
             throws JSONException {
 
@@ -78,6 +108,21 @@ public class NativeLogs extends CordovaPlugin {
             boolean bCopyToClipBoard = args.getBoolean(1);
 
             String log = getLogsFromLogCat(nbLines);
+
+            if (bCopyToClipBoard) {
+                ClipboardManager clipboard = (ClipboardManager) cordova.getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("logcat", log);
+                clipboard.setPrimaryClip(clip);
+            }
+            callbackContext.success(log);
+            return true;
+
+        } else if (action.equals("getPushwooshLog")) {
+
+            int nbLines = args.getInt(0);
+            boolean bCopyToClipBoard = args.getBoolean(1);
+
+            String log = getPushwooshLogsFromLogCat(nbLines);
 
             if (bCopyToClipBoard) {
                 ClipboardManager clipboard = (ClipboardManager) cordova.getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
