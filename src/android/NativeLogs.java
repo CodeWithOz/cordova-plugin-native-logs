@@ -25,7 +25,7 @@ public class NativeLogs extends CordovaPlugin {
         LOG.d(LOG_TAG, "clearLog");
 
         try {
-            Runtime.getRuntime().exec("logcat -c");
+            Runtime.getRuntime().exec("logcat -b main,system -c");
         }
         catch (Exception ex) {
             ex.printStackTrace();
