@@ -9,7 +9,11 @@ module.exports = {
 
 	getPushwooshLog:function(_nbLines,_bCopyToClipboard,successCB,failureCB){
 		cordova.exec(successCB, failureCB, this.pluginName,"getPushwooshLog", [_nbLines,_bCopyToClipboard]);
-	}
+	},
+
+	getCrashLog:function(_nbLines,_bCopyToClipboard,successCB,failureCB){
+		cordova.exec(successCB, failureCB, this.pluginName,"getCrashLog", [_nbLines,_bCopyToClipboard]);
+	},
 };
 
 
